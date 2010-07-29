@@ -1,13 +1,13 @@
-require 'rubygems'
 require 'sinatra'
-require 'yaml'
+require 'json'
+require 'lib/rack/raw_upload'
 
 get '/' do
   HTML_CODE
 end
 
 post '/' do
-  params[:file].to_yaml
+  JSON.generate(params[:file])
 end
 
 
@@ -54,7 +54,7 @@ document.getElementById('the-file').onchange = function () {
       }
 
       if (status == '200' && evt.target.responseText) {
-        $('#result').html(evt.target.responseText);
+        $('#result').html('<p>The server saw it as:</p><pre>' + evt.target.responseText + '</pre>');
       }
   }
 }
@@ -81,7 +81,7 @@ HTML_CODE =<<-HTML
 </script>
 <p id="upload-status"></p>
 <p id="progress"></p>
-<pre id="result"></pre>
+<div id="result"></div>
 </body>
 </html>
 HTML
