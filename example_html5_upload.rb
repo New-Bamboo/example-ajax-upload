@@ -27,7 +27,6 @@ document.getElementById('the-file').onchange = function () {
   xhr.upload.addEventListener('load', onloadHandler, false);
   xhr.addEventListener('readystatechange', onreadystatechangeHandler, false);
   xhr.setRequestHeader("Content-Type", "application/octet-stream");
-  console.log('Sending ', file)
   xhr.setRequestHeader("X-File_name", file.name);
   xhr.send(file); // Simple!
 
