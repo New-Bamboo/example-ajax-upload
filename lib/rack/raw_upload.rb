@@ -25,7 +25,8 @@ module Rack
     def convert_and_pass_on(env)
       tempfile = Tempfile.new('raw-upload.')
       tempfile << env['rack.input'].read
-      tempfile.close
+      tempfile.flush
+      tempfile.rewind
       fake_file = {
         :filename => env['HTTP_X_FILE_NAME'],
         :type => 'application/octet-stream',
