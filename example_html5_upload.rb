@@ -21,11 +21,11 @@ document.getElementById('the-file').onchange = function () {
   var file = fileInput.files[0];
 
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', '/', true);
   xhr.upload.addEventListener('loadstart', onloadstartHandler, false);
   xhr.upload.addEventListener('progress', onprogressHandler, false);
   xhr.upload.addEventListener('load', onloadHandler, false);
   xhr.addEventListener('readystatechange', onreadystatechangeHandler, false);
+  xhr.open('POST', '/', true);
   xhr.setRequestHeader("Content-Type", "application/octet-stream");
   xhr.setRequestHeader("X-File-Name", file.name);
   xhr.send(file); // Simple!
