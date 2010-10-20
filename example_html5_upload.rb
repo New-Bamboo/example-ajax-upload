@@ -39,7 +39,7 @@ document.getElementById('the-file').onchange = function () {
   }
 
   function onprogressHandler(evt) {
-      var percent = event.loaded/event.total*100;
+      var percent = evt.loaded/evt.total*100;
       $('#progress').html('Progress: ' + percent + '%');
   }
   
