@@ -1,13 +1,12 @@
 require 'sinatra'
 require 'json'
-require 'lib/rack/raw_upload'
 
 get '/' do
   HTML_CODE
 end
 
 post '/' do
-  JSON.generate(params[:file])
+  JSON.generate(params['our-file'])
 end
 
 
@@ -16,31 +15,35 @@ end
 #
 
 JS_CODE =<<-JS
-document.getElementById('the-file').onchange = function () {
-  var fileInput = document.getElementById('the-file');
-  var file = fileInput.files[0];
+document.getElementById('form-id').onsubmit = function (evt) {
+  var form = document.getElementById('form-id');
+  var formData = new FormData(form);
+  var action = form.getAttribute('action');
 
   var xhr = new XMLHttpRequest();
   xhr.upload.addEventListener('loadstart', onloadstartHandler, false);
   xhr.upload.addEventListener('progress', onprogressHandler, false);
   xhr.upload.addEventListener('load', onloadHandler, false);
   xhr.addEventListener('readystatechange', onreadystatechangeHandler, false);
-  xhr.open('POST', '/', true);
-  xhr.setRequestHeader("Content-Type", "application/octet-stream");
-  xhr.setRequestHeader("X-File-Name", file.name);
-  xhr.send(file); // Simple!
+  xhr.open('POST', action, true);
+  xhr.send(formData); // Simple!
+
+  return false;
 
   function onloadstartHandler(evt) {
-      $('#upload-status').html('Upload started!');
+    var div = document.getElementById('upload-status');
+    div.innerHTML = 'Upload started!';
   }
 
   function onloadHandler(evt) {
-      $('#upload-status').html('Upload successful!');
+    var div = document.getElementById('upload-status');
+    div.innerHTML = 'Upload successful!';
   }
 
   function onprogressHandler(evt) {
-      var percent = evt.loaded/evt.total*100;
-      $('#progress').html('Progress: ' + percent + '%');
+    var div = document.getElementById('progress');
+    var percent = evt.loaded/evt.total*100;
+    div.innerHTML = 'Progress: ' + percent + '%';
   }
   
   function onreadystatechangeHandler(evt) {
@@ -54,7 +57,8 @@ document.getElementById('the-file').onchange = function () {
       }
 
       if (status == '200' && evt.target.responseText) {
-        $('#result').html('<p>The server saw it as:</p><pre>' + evt.target.responseText + '</pre>');
+        var result = document.getElementById('result');
+        result.innerHTML = '<p>The server saw it as:</p><pre>' + evt.target.responseText + '</pre>';
       }
   }
 }
@@ -71,17 +75,20 @@ HTML_CODE =<<-HTML
 <head>
   <meta charset="utf-8" />
   <title>Ajax upload form</title>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 </head>
 <body>
-
-<input id="the-file" type=file name=file />
-<script>
+<form action="/" method="post" enctype="multipart/form-data" id="form-id">
+  <input id="before-id" type="hidden" name="before" value="before-val" />
+  <input id="file-id" type="file" name="our-file" />
+  <input id="after-id" type="hidden" name="after" value="after-val" />
+  <input type="submit" value="Upload!" />
+  <script>
 #{JS_CODE}
-</script>
-<p id="upload-status"></p>
-<p id="progress"></p>
-<div id="result"></div>
+  </script>
+  <p id="upload-status"></p>
+  <p id="progress"></p>
+  <pre id="result"></pre>
+</form>
 </body>
 </html>
 HTML
