@@ -87,9 +87,7 @@ HTML_CODE =<<-HTML
 </head>
 <body>
 <form action="/" method="post" enctype="multipart/form-data" id="form-id">
-  <input id="before-id" type="hidden" name="before" value="before-val" />
   <input id="file-id" type="file" name="our-file" />
-  <input id="after-id" type="hidden" name="after" value="after-val" />
   <input type="submit" value="Upload!" />
   <script>
 #{JS_CODE}
