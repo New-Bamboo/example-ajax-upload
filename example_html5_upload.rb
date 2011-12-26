@@ -5,7 +5,7 @@ get '/' do
   HTML_CODE
 end
 
-post '/' do
+post '/upload' do
   file = params['our-file']
   details = {
     :filename => file[:filename],
@@ -24,10 +24,13 @@ end
 #
 
 JS_CODE =<<-JS
-document.getElementById('form-id').onsubmit = function (evt) {
-  var form = document.getElementById('form-id');
-  var formData = new FormData(form);
-  var action = form.getAttribute('action');
+var uploadBtn = document.getElementById('upload-button-id');
+uploadBtn.onclick = function (evt) {
+  var fileInput = document.getElementById('file-id');
+  var file = fileInput.files[0];
+  var formData = new FormData();
+  var action = '/upload';
+  formData.append('our-file', file);
 
   var xhr = new XMLHttpRequest();
   xhr.upload.addEventListener('loadstart', onloadstartHandler, false);
@@ -87,8 +90,9 @@ HTML_CODE =<<-HTML
 </head>
 <body>
 <form action="/" method="post" enctype="multipart/form-data" id="form-id">
-  <input id="file-id" type="file" name="our-file" />
-  <input type="submit" value="Upload!" />
+  <p><input id="file-id" type="file" name="our-file" /> <input type="button" value="Upload" id="upload-button-id" /></p>
+  <p><label>Some other field: <input name="other-field" type="text" id="other-field-id" /></label></p>
+  <p><input type="submit" value="Save" /></p>
   <script>
 #{JS_CODE}
   </script>
