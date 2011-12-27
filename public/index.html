@@ -10,54 +10,68 @@
   <p><label>Some other field: <input name="other-field" type="text" id="other-field-id" /></label></p>
   <p><input type="submit" value="Save" /></p>
   <script>
+var form = document.getElementById('form-id');
+form.onsubmit = function() {
+  var formData = new FormData(form);
+  var action = form.getAttribute('action');
+
+  sendXHRequest(formData, action);
+
+  return false;
+}
+
 var uploadBtn = document.getElementById('upload-button-id');
 uploadBtn.onclick = function (evt) {
-  var fileInput = document.getElementById('file-id');
-  var file = fileInput.files[0];
   var formData = new FormData();
   var action = '/upload';
+  var fileInput = document.getElementById('file-id');
+  var file = fileInput.files[0];
   formData.append('our-file', file);
 
+  sendXHRequest(formData, action);
+
+  return false;
+}
+
+function sendXHRequest(formData, uri) {
   var xhr = new XMLHttpRequest();
   xhr.upload.addEventListener('loadstart', onloadstartHandler, false);
   xhr.upload.addEventListener('progress', onprogressHandler, false);
   xhr.upload.addEventListener('load', onloadHandler, false);
   xhr.addEventListener('readystatechange', onreadystatechangeHandler, false);
-  xhr.open('POST', action, true);
-  xhr.send(formData); // Simple!
+  xhr.open('POST', uri, true);
+  xhr.send(formData);
+}
 
-  return false;
+function onloadstartHandler(evt) {
+  var div = document.getElementById('upload-status');
+  div.innerHTML = 'Upload started!';
+}
 
-  function onloadstartHandler(evt) {
-    var div = document.getElementById('upload-status');
-    div.innerHTML = 'Upload started!';
-  }
+function onloadHandler(evt) {
+  var div = document.getElementById('upload-status');
+  div.innerHTML = 'Upload successful!';
+}
 
-  function onloadHandler(evt) {
-    var div = document.getElementById('upload-status');
-    div.innerHTML = 'Upload successful!';
-  }
-
-  function onprogressHandler(evt) {
-    var div = document.getElementById('progress');
-    var percent = evt.loaded/evt.total*100;
-    div.innerHTML = 'Progress: ' + percent + '%';
-  }
+function onprogressHandler(evt) {
+  var div = document.getElementById('progress');
+  var percent = evt.loaded/evt.total*100;
+  div.innerHTML = 'Progress: ' + percent + '%';
+}
   
-  function onreadystatechangeHandler(evt) {
-      var status = null;
+function onreadystatechangeHandler(evt) {
+  var status = null;
 
-      try {
-          status = evt.target.status;
-      }
-      catch(e) {
-          return;
-      }
+  try {
+    status = evt.target.status;
+  }
+  catch(e) {
+    return;
+  }
 
-      if (status == '200' && evt.target.responseText) {
-        var result = document.getElementById('result');
-        result.innerHTML = '<p>The server saw it as:</p><pre>' + evt.target.responseText + '</pre>';
-      }
+  if (status == '200' && evt.target.responseText) {
+    var result = document.getElementById('result');
+    result.innerHTML = '<p>The server saw it as:</p><pre>' + evt.target.responseText + '</pre>';
   }
 }
   </script>
