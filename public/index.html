@@ -37,29 +37,36 @@ if (supportAjaxUploadWithProgress()) {
   var uploadBtn = document.getElementById('upload-button-id');
   notice.innerHTML = "Your browser supports HTML uploads. Go try me! :-)";
   uploadBtn.removeAttribute('disabled');
+
+  initFullFormAjaxUpload();
+  initFileOnlyAjaxUpload();
 }
 
-var form = document.getElementById('form-id');
-form.onsubmit = function() {
-  var formData = new FormData(form);
-  var action = form.getAttribute('action');
+function initFullFormAjaxUpload() {
+  var form = document.getElementById('form-id');
+  form.onsubmit = function() {
+    var formData = new FormData(form);
+    var action = form.getAttribute('action');
 
-  sendXHRequest(formData, action);
+    sendXHRequest(formData, action);
 
-  return false;
+    return false;
+  }
 }
 
-var uploadBtn = document.getElementById('upload-button-id');
-uploadBtn.onclick = function (evt) {
-  var formData = new FormData();
-  var action = '/upload';
-  var fileInput = document.getElementById('file-id');
-  var file = fileInput.files[0];
-  formData.append('our-file', file);
+function initFileOnlyAjaxUpload() {
+  var uploadBtn = document.getElementById('upload-button-id');
+  uploadBtn.onclick = function (evt) {
+    var formData = new FormData();
+    var action = '/upload';
+    var fileInput = document.getElementById('file-id');
+    var file = fileInput.files[0];
+    formData.append('our-file', file);
 
-  sendXHRequest(formData, action);
+    sendXHRequest(formData, action);
 
-  return false;
+    return false;
+  }
 }
 
 function sendXHRequest(formData, uri) {
