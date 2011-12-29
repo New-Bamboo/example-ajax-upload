@@ -5,11 +5,40 @@
   <title>Ajax upload form</title>
 </head>
 <body>
+
+<p id="support-notice">Your browser does not support Ajax uploads :-(<br/>The form will be submitted as normal.</p>
+
 <form action="/" method="post" enctype="multipart/form-data" id="form-id">
-  <p><input id="file-id" type="file" name="our-file" /> <input type="button" value="Upload" id="upload-button-id" /></p>
+  <p><input id="file-id" type="file" name="our-file" /> <input type="button" value="Upload" id="upload-button-id" disabled="disabled" /></p>
   <p><label>Some other field: <input name="other-field" type="text" id="other-field-id" /></label></p>
-  <p><input type="submit" value="Save" /></p>
+  <p><input type="submit" value="Submit" /></p>
   <script>
+function supportAjaxUploadWithProgress() {
+  return supportFileAPI() && supportAjaxUploadProgressEvents() && supportFormData();
+
+  function supportFileAPI() {
+    var fi = document.createElement('INPUT');
+    fi.type = 'file';
+    return 'files' in fi;
+  };
+
+  function supportAjaxUploadProgressEvents() {
+    var xhr = new XMLHttpRequest();
+    return !! (xhr && ('upload' in xhr) && ('onprogress' in xhr.upload));
+  };
+
+  function supportFormData() {
+    return !! window.FormData;
+  }
+}
+
+if (supportAjaxUploadWithProgress()) {
+  var notice = document.getElementById('support-notice');
+  var uploadBtn = document.getElementById('upload-button-id');
+  notice.innerHTML = "Your browser supports HTML uploads. Go try me! :-)";
+  uploadBtn.removeAttribute('disabled');
+}
+
 var form = document.getElementById('form-id');
 form.onsubmit = function() {
   var formData = new FormData(form);
