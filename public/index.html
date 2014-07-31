@@ -128,13 +128,13 @@ function sendXHRequest(formData, uri) {
 // Handle the start of the transmission
 function onloadstartHandler(evt) {
   var div = document.getElementById('upload-status');
-  div.innerHTML = 'Upload started!';
+  div.innerHTML = 'Upload started.';
 }
 
 // Handle the end of the transmission
 function onloadHandler(evt) {
   var div = document.getElementById('upload-status');
-  div.innerHTML = 'Upload successful!';
+  div.innerHTML += '<' + 'br>File uploaded. Waiting for response.';
 }
 
 // Handle the progress
@@ -146,16 +146,21 @@ function onprogressHandler(evt) {
 
 // Handle the response from the server
 function onreadystatechangeHandler(evt) {
-  var status = null;
+  var status, text, readyState;
 
   try {
+    readyState = evt.target.readyState;
+    text = evt.target.responseText;
     status = evt.target.status;
   }
   catch(e) {
     return;
   }
 
-  if (status == '200' && evt.target.responseText) {
+  if (readyState == 4 && status == '200' && evt.target.responseText) {
+    var status = document.getElementById('upload-status');
+    status.innerHTML += '<' + 'br>Success!';
+
     var result = document.getElementById('result');
     result.innerHTML = '<p>The server saw it as:</p><pre>' + evt.target.responseText + '</pre>';
   }
